@@ -54,7 +54,7 @@ LitRoulette is released under the MIT License.
 
 ## Acknowledgments
 
-- Google Books API for providing the book data.
+- Open Library API and Google Books API for providing the book data.
 - Rust community for the amazing crates used in this project.
 
 ## 
