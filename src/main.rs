@@ -106,7 +106,7 @@ async fn main() -> Result<(), reqwest::Error> {
                 if let Some(description) = &first_book.volume_info.description {
                     println!("\n{}\n", format!("Description: {}", description).green());
                 } else {
-                    println!("\n{}", "Description not available".italic().green());
+                    println!("\n{}\n", "Description not available".italic().green());
                 }
             }
         }
