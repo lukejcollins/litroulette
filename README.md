@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/lukejcollins/litroulette/assets/44213313/d1e35156-39bc-4e68-81e3-5020ec7593a9" alt="image">
+</p>
+
 # LitRoulette
 
 LitRoulette is a CLI tool that suggests random books for you to read. Whether you're looking for your next sci-fi adventure, a romantic escapade, or a deep dive into historical events, LitRoulette can help you decide.
