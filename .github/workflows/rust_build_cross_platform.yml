@@ -1,35 +1,78 @@
+name: Cross-Platform Rust Build and Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Build for Ubuntu
+        run: cargo build --release
+      - name: Upload Ubuntu Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: litroulette-ubuntu
+          path: target/release/litroulette
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Build for macOS
+        run: cargo build --release
+      - name: Upload macOS Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: litroulette-macos
+          path: target/release/litroulette
+
   attach-binaries:
     needs: [build-ubuntu, build-macos]
     runs-on: ubuntu-latest
     steps:
-    - name: Download Ubuntu Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: litroulette-ubuntu
-        path: ubuntu-artifact
+      - name: Download Ubuntu Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: litroulette-ubuntu
+          path: ubuntu-artifact
 
-    - name: Download macOS Artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: litroulette-macos
-        path: macos-artifact
+      - name: Download macOS Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: litroulette-macos
+          path: macos-artifact
 
-    - name: Upload Ubuntu Binary
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./ubuntu-artifact/litroulette
-        asset_name: litroulette-ubuntu
-        asset_content_type: application/octet-stream
+      - name: Upload Ubuntu Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./ubuntu-artifact/litroulette
+          asset_name: litroulette-ubuntu
+          asset_content_type: application/octet-stream
 
-    - name: Upload macOS Binary
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./macos-artifact/litroulette
-        asset_name: litroulette-macos
-        asset_content_type: application/octet-stream
+      - name: Upload macOS Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./macos-artifact/litroulette
+          asset_name: litroulette-macos
+          asset_content_type: application/octet-stream
