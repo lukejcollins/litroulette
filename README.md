@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/lukejcollins/litroulette/assets/44213313/d1e35156-39bc-4e68-81e3-5020ec7593a9" alt="image">
+</p>
+
 # LitRoulette
 
 ![ezgif com-video-to-gif-converted](https://github.com/lukejcollins/litroulette/assets/44213313/32ed2b0c-106a-461b-b77b-b6d813b7aa76)
