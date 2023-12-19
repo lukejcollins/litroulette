@@ -4,6 +4,8 @@
 
 # LitRoulette
 
+[![Cross-Platform Rust Build and Release](https://github.com/lukejcollins/litroulette/actions/workflows/rust_build_cross_platform.yml/badge.svg)](https://github.com/lukejcollins/litroulette/actions/workflows/rust_build_cross_platform.yml)
+
 ![ezgif com-video-to-gif-converted](https://github.com/lukejcollins/litroulette/assets/44213313/32ed2b0c-106a-461b-b77b-b6d813b7aa76)
 
 LitRoulette is a CLI tool that suggests random books for you to read. Whether you're looking for your next sci-fi adventure, a romantic escapade, or a deep dive into historical events, LitRoulette can help you decide.
