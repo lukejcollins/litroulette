@@ -4,7 +4,7 @@
 
 # LitRoulette
 
-[![Cross-Platform Rust Build and Release](https://github.com/lukejcollins/litroulette/actions/workflows/rust_build_cross_platform.yml/badge.svg)](https://github.com/lukejcollins/litroulette/actions/workflows/rust_build_cross_platform.yml)
+[![Cross-Platform Rust Build and Release](https://github.com/lukejcollins/litroulette/actions/workflows/rust_build_cross_platform.yml/badge.svg)](https://github.com/lukejcollins/litroulette/actions/workflows/rust_build_cross_platform.yml) [![Lint](https://github.com/lukejcollins/litroulette/actions/workflows/rust_lint.yml/badge.svg)](https://github.com/lukejcollins/litroulette/actions/workflows/rust_lint.yml)
 
 ![ezgif com-video-to-gif-converted](https://github.com/lukejcollins/litroulette/assets/44213313/32ed2b0c-106a-461b-b77b-b6d813b7aa76)
 
