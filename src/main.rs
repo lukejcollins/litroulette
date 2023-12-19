@@ -1,6 +1,5 @@
 use clap::{Arg, Command}; // Command-line argument parser
 use colored::*; // For colored terminal output
-use reqwest;
 use serde::Deserialize; // For deserializing JSON
 use rand::{thread_rng, Rng}; // For generating random numbers
 
@@ -59,10 +58,10 @@ async fn main() -> Result<(), reqwest::Error> {
 
     // Handle genrelist parameter
     if matches.is_present("genrelist") {
-        println!("{}", format!("\nAvailable genres include:").bold().underline().blue());
+        println!("{}", "\nAvailable genres include:".bold().underline().blue());
         // List all genres here
-        println!("\n{}", format!("Arts, Architecture, Art Instruction, Art History, Dance, Design, Fashion, Film, Graphic Design, Music, Music Theory, Painting, Photography, Animals, Bears, Cats, Kittens, Dogs, Puppies, Fiction, Fantasy, Historical Fiction, Horror, Humor, Literature, Magic, Mystery and detective stories, Plays, Poetry, Romance, Science Fiction, Short Stories, Thriller, Young Adult, Science & Mathematics, Biology, Chemistry, Mathematics, Physics, Programming, Business & Finance, Management, Entrepreneurship, Business Economics, Business Success, Finance, Childrens, Kids Books, Stories in Rhyme, Baby Books, Bedtime Books, Picture Books, History, Ancient Civilization, Archaeology, Anthropology, World War II, Social Life and Customs, Health & Wellness, Cooking, Cookbooks, Mental Health, Exercise, Nutrition, Self-help, Biography, Autobiographies, History, Politics and Government, World War II, Women, Kings and Rulers, Composers, Artists, Social Sciences, Anthropology, Religion, Political Science, Psychology, Places, Brazil, India, Indonesia, United States, Textbooks, History, Mathematics, Geography, Psychology, Algebra, Education, Business & Economics, Science, Chemistry, English Language, Physics, Computer Science...").green());
-	println!("{}", format!("\nExtra subjects here: https://openlibrary.org/subjects").italic().magenta());
+        println!("\n{}", "Arts, Architecture, Art Instruction, Art History, Dance, Design, Fashion, Film, Graphic Design, Music, Music Theory, Painting, Photography, Animals, Bears, Cats, Kittens, Dogs, Puppies, Fiction, Fantasy, Historical Fiction, Horror, Humor, Literature, Magic, Mystery and detective stories, Plays, Poetry, Romance, Science Fiction, Short Stories, Thriller, Young Adult, Science & Mathematics, Biology, Chemistry, Mathematics, Physics, Programming, Business & Finance, Management, Entrepreneurship, Business Economics, Business Success, Finance, Childrens, Kids Books, Stories in Rhyme, Baby Books, Bedtime Books, Picture Books, History, Ancient Civilization, Archaeology, Anthropology, World War II, Social Life and Customs, Health & Wellness, Cooking, Cookbooks, Mental Health, Exercise, Nutrition, Self-help, Biography, Autobiographies, History, Politics and Government, World War II, Women, Kings and Rulers, Composers, Artists, Social Sciences, Anthropology, Religion, Political Science, Psychology, Places, Brazil, India, Indonesia, United States, Textbooks, History, Mathematics, Geography, Psychology, Algebra, Education, Business & Economics, Science, Chemistry, English Language, Physics, Computer Science...".green());
+	println!("{}", "\nExtra subjects here: https://openlibrary.org/subjects".italic().magenta());
     }
 
     // Handle genre parameter only if 'genrelist' is not the only argument
