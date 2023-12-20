@@ -20,7 +20,7 @@ jobs:
       - name: Upload Ubuntu Binary
         uses: actions/upload-artifact@v2
         with:
-          name: litroulette-ubuntu
+          name: litroulette-${{ github.ref_name }}-Linux
           path: target/release/litroulette
 
   build-macos:
@@ -38,7 +38,7 @@ jobs:
       - name: Upload macOS Binary
         uses: actions/upload-artifact@v2
         with:
-          name: litroulette-macos
+          name: litroulette-${{ github.ref_name }}-macOS
           path: target/release/litroulette
 
   attach-binaries:
@@ -48,13 +48,13 @@ jobs:
       - name: Download Ubuntu Artifact
         uses: actions/download-artifact@v2
         with:
-          name: litroulette-ubuntu
+          name: litroulette-${{ github.ref_name }}-Linux
           path: ubuntu-artifact
 
       - name: Download macOS Artifact
         uses: actions/download-artifact@v2
         with:
-          name: litroulette-macos
+          name: litroulette-${{ github.ref_name }}-macOS
           path: macos-artifact
 
       - name: Upload Ubuntu Binary
@@ -64,7 +64,7 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./ubuntu-artifact/litroulette
-          asset_name: litroulette-ubuntu
+          asset_name: litroulette-${{ github.ref_name }}-Linux
           asset_content_type: application/octet-stream
 
       - name: Upload macOS Binary
@@ -74,5 +74,5 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./macos-artifact/litroulette
-          asset_name: litroulette-macos
+          asset_name: litroulette-${{ github.ref_name }}-macOS
           asset_content_type: application/octet-stream
