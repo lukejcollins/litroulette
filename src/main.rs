@@ -36,8 +36,7 @@ struct Author {
 struct Book {
     title: String,
     authors: Vec<Author>,
-    key: Option<String>,  // Updated to handle null values
-    // ... Add other fields as necessary, marking them as optional if they can be null
+    key: Option<String>,
 }
 
 async fn fetch_isbn_from_partner_api(work_key: &str) -> Result<String, Box<dyn Error>> {
@@ -50,13 +49,11 @@ async fn fetch_isbn_from_partner_api(work_key: &str) -> Result<String, Box<dyn E
         for entry in entries {
             if let Some(isbn_13) = entry.get("isbn_13").and_then(|i| i.as_array()) {
                 if let Some(isbn_value) = isbn_13.first().and_then(|i| i.as_str()) {
-                    println!("Found ISBN: {}", isbn_value); // Log each found ISBN
                     return Ok(isbn_value.to_string());
                 }
             }
             if let Some(isbn_10) = entry.get("isbn_10").and_then(|i| i.as_array()) {
                 if let Some(isbn_value) = isbn_10.first().and_then(|i| i.as_str()) {
-                    println!("Found ISBN: {}", isbn_value); // Log each found ISBN
                     return Ok(isbn_value.to_string());
                 }
             }
@@ -171,20 +168,21 @@ async fn perform_genre_search(genre: &str, rng: &mut impl Rng) -> Result<(), Box
         }
     }
 
-    // Perform Google Books search by ISBN if available
+    // If the ISBN is not empty, attempt to search with it
     if !isbn.is_empty() {
-        if let Err(_) = search_google_books_by_isbn(&isbn, book).await {
+	// Use is_err() to check if search_google_books_by_isbn returns an Err
+	if search_google_books_by_isbn(&isbn, book).await.is_err() {
             // If ISBN search fails, fallback to title search
             fallback_to_title_search = true;
-        }
+	}
     } else {
-        fallback_to_title_search = true;
+	// If the ISBN is empty, set fallback to title search
+	fallback_to_title_search = true;
     }
 
-    // Fallback to title search if needed
+    // Execute the fallback title search if necessary
     if fallback_to_title_search {
-        println!("Falling back to title search for the book.");
-        search_google_books_by_title(&book.title, book).await?;
+	search_google_books_by_title(&book.title, book).await?;
     }
 
     Ok(())
@@ -228,11 +226,11 @@ fn display_google_books_results(google_resp: GoogleApiResponse, book: &Book) -> 
             if let Some(description) = &first_book.volume_info.description {
                 println!("\n{}\n", format!("Description: {}", description).green());
             } else {
-                println!("\n{}\n", "Description not available".italic().green());
+                println!("\n{}\n", "Description: Not available".italic().green());
             }
         }
     } else {
-        println!("\nDescription not available");
+        println!("\n{}\n", "Description: Not available".italic().green());
     }
 
     // Display Open Library URL
