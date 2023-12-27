@@ -43,7 +43,6 @@ struct Book {
 async fn fetch_isbn_from_partner_api(work_key: &str) -> Result<String, Box<dyn Error>> {
     let url = format!("https://openlibrary.org{}/editions.json", work_key);
     let resp = reqwest::get(&url).await?.text().await?;
-    println!("Response: {}", resp); // Log the full response
 
     let json: Value = serde_json::from_str(&resp)?;
 
@@ -119,7 +118,6 @@ async fn perform_genre_search(genre: &str, rng: &mut impl Rng) -> Result<(), Box
 
     // Fetch the initial response as a raw string
     let response_text = reqwest::get(&base_url).await?.text().await?;
-    println!("Raw API Response: {}", response_text);
 
     // Attempt to deserialize the initial response
     let initial_resp = match serde_json::from_str::<ApiResponse>(&response_text) {
@@ -138,7 +136,6 @@ async fn perform_genre_search(genre: &str, rng: &mut impl Rng) -> Result<(), Box
 
     // Fetch the paginated response as a raw string
     let paginated_response_text = reqwest::get(&paginated_url).await?.text().await?;
-    println!("Raw Paginated API Response: {}", paginated_response_text);
 
     // Attempt to deserialize the paginated response
     let paginated_resp = match serde_json::from_str::<ApiResponse>(&paginated_response_text) {
@@ -157,41 +154,73 @@ async fn perform_genre_search(genre: &str, rng: &mut impl Rng) -> Result<(), Box
     let random_index = rng.gen_range(0..paginated_resp.works.len());
     let book = &paginated_resp.works[random_index];
 
-    // Try to get the ISBN from the editions page using the work key
-    let mut search_query = String::new();
+    // Initialize variables for the ISBN and the potential fallback search by title
+    let mut isbn = String::new();
+    let mut fallback_to_title_search = false;
+
+    // Query the Partner API to get ISBN
     if let Some(key) = &book.key {
         match fetch_isbn_from_partner_api(key).await {
             Ok(fetched_isbn) => {
-                println!("ISBN found: {}", fetched_isbn);
-                search_query = format!("isbn:{}", fetched_isbn);
+                isbn = fetched_isbn;
             },
-            Err(e) => {
-                println!("Error fetching ISBN: {}", e);
-                println!("Falling back to title search.");
-                search_query = format!("intitle:\"{}\"", book.title);
+            Err(_) => {
+                // If ISBN is not found, set the flag to use title search later
+                fallback_to_title_search = true;
             }
         }
-    } else {
-        println!("No key available for the book, falling back to title search.");
-        search_query = format!("intitle:\"{}\"", book.title);
     }
 
-    // Perform search with either ISBN or title
-    let google_books_url = format!("https://www.googleapis.com/books/v1/volumes?q={}", search_query);
-    let google_books_response = reqwest::get(&google_books_url).await?.text().await?;
-    let google_resp: GoogleApiResponse = serde_json::from_str(&google_books_response)?;
+    // Perform Google Books search by ISBN if available
+    if !isbn.is_empty() {
+        if let Err(_) = search_google_books_by_isbn(&isbn, book).await {
+            // If ISBN search fails, fallback to title search
+            fallback_to_title_search = true;
+        }
+    } else {
+        fallback_to_title_search = true;
+    }
 
-    // Display the results
+    // Fallback to title search if needed
+    if fallback_to_title_search {
+        println!("Falling back to title search for the book.");
+        search_google_books_by_title(&book.title, book).await?;
+    }
+
+    Ok(())
+}
+
+// Function to search Google Books by ISBN and display results
+async fn search_google_books_by_isbn(isbn: &str, book: &Book) -> Result<(), Box<dyn Error>> {
+    let google_books_url = format!("https://www.googleapis.com/books/v1/volumes?q=isbn:{}", isbn);
+    let resp = reqwest::get(&google_books_url).await?.text().await?;
+    let google_resp: GoogleApiResponse = serde_json::from_str(&resp)?;
+    display_google_books_results(google_resp, book)
+}
+
+// Function to search Google Books by title and display results
+async fn search_google_books_by_title(title: &str, book: &Book) -> Result<(), Box<dyn Error>> {
+    let google_books_url = format!("https://www.googleapis.com/books/v1/volumes?q=intitle:\"{}\"", title);
+    let resp = reqwest::get(&google_books_url).await?.text().await?;
+    let google_resp: GoogleApiResponse = serde_json::from_str(&resp)?;
+    display_google_books_results(google_resp, book)
+}
+
+// Function to display Google Books results
+fn display_google_books_results(google_resp: GoogleApiResponse, book: &Book) -> Result<(), Box<dyn Error>> {
     println!("\n{}\n", format!("Title: {}", book.title).bold().underline().blue());
+
+    // Display authors
     if !book.authors.is_empty() {
-        let authors_list = book.authors.iter()
-            .map(|author| author.name.as_str())
-            .collect::<Vec<&str>>()
-            .join(", ");
-        println!("{}", format!("Author(s): {}", authors_list).italic().yellow());
+	let authors_list = book.authors.iter()
+            .map(|author| author.name.clone()) // Clone the String to get an owned String
+            .collect::<Vec<String>>() // Now you have Vec<String> instead of Vec<&String>
+            .join(", "); // You can now use join on a Vec<String>
+	println!("{}", format!("Author(s): {}", authors_list).italic().yellow());
     } else {
-        println!("{}", "Author information not available".italic().yellow());
+	println!("{}", "Author information not available".italic().yellow());
     }
+
 
     // Display description if available
     if let Some(items) = google_resp.items {
